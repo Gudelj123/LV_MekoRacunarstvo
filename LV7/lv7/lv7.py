@@ -1,0 +1,77 @@
+import skfuzzy as fuzz
+from skfuzzy import control as ctrl
+import numpy as np
+import matplotlib.pyplot as plt
+########################################################################################################
+pogreskaTriangle = ctrl.Antecedent(np.linspace(0, 30, 100), 'pogreskaTriangle')
+pogreskaTriangle['niska'] = fuzz.trimf(pogreskaTriangle.universe, [0,0,15])
+pogreskaTriangle['srednja'] = fuzz.trimf(pogreskaTriangle.universe, [0,15,30])
+pogreskaTriangle['visoka'] = fuzz.trimf(pogreskaTriangle.universe, [15,30,30])
+pogreskaTriangle.view()
+grijacTriangle = ctrl.Consequent(np.linspace(0, 10, 100), 'grijacTriangle', defuzzify_method='centroid')
+grijacTriangle['slab'] = fuzz.trimf(grijacTriangle.universe, [0,0,5])
+grijacTriangle['srednji'] = fuzz.trimf(grijacTriangle.universe, [0,5,10])
+grijacTriangle['jak'] = fuzz.trimf(grijacTriangle.universe, [5,10,10])
+grijacTriangle.view()
+triangleRule1 = ctrl.Rule(pogreskaTriangle['niska'],grijacTriangle['slab'])
+triangleRule2 = ctrl.Rule(pogreskaTriangle['srednja'],grijacTriangle['srednji'])
+triangleRule3 = ctrl.Rule(pogreskaTriangle['visoka'],grijacTriangle['jak'])
+trianReg = ctrl.ControlSystem([triangleRule1,triangleRule2,triangleRule3])
+######
+trianReg_sim = ctrl.ControlSystemSimulation(trianReg)
+trianReg_sim.input['pogreskaTriangle'] = np.linspace(0,30,100)
+trianReg_sim.compute()
+outputTriangle = trianReg_sim.output['grijacTriangle']
+plt.figure()
+plt.plot(outputTriangle)
+plt.title("IZLAZ IZ TROKUTASTOG SUSTAVA")
+plt.show()
+########################################################################################################
+pogreskaTrapez = ctrl.Antecedent(np.linspace(0, 30, 100), 'pogreskaTrapez')
+pogreskaTrapez['niska'] = fuzz.trapmf(pogreskaTrapez.universe, [0,0,5,10])
+pogreskaTrapez['srednja'] = fuzz.trapmf(pogreskaTrapez.universe, [5,10,20,25])
+pogreskaTrapez['visoka'] = fuzz.trapmf(pogreskaTrapez.universe, [20,25,30,30])
+pogreskaTrapez.view()
+grijacTrapez = ctrl.Consequent(np.linspace(0, 10, 100), 'grijacTrapez', defuzzify_method='centroid')
+grijacTrapez['slab'] = fuzz.trapmf(grijacTrapez.universe,[0,0,2,5])
+grijacTrapez['srednji'] = fuzz.trapmf(grijacTrapez.universe,[2,4,6,8])
+grijacTrapez['jak'] = fuzz.trapmf(grijacTrapez.universe,[5,8,10,10])
+grijacTrapez.view()
+trapezRule1 = ctrl.Rule(pogreskaTrapez['niska'],grijacTrapez['slab'])
+trapezRule2 = ctrl.Rule(pogreskaTrapez['srednja'],grijacTrapez['srednji'])
+trapezRule3 = ctrl.Rule(pogreskaTrapez['visoka'],grijacTrapez['jak'])
+trapezReg = ctrl.ControlSystem([trapezRule1,trapezRule2,trapezRule3])
+#######
+trapezReg_sim = ctrl.ControlSystemSimulation(trapezReg)
+trapezReg_sim.input['pogreskaTrapez'] = np.linspace(0,30,100)
+trapezReg_sim.compute()
+outputTrapez = trapezReg_sim.output['grijacTrapez']
+plt.figure()
+plt.plot(outputTrapez)
+plt.title("IZLAZ IZ TRAPEZASTOG SUSTAVA")
+plt.show()
+########################################################################################################
+pogreskaGauss = ctrl.Antecedent(np.linspace(0, 30, 100), 'pogreskaGauss')
+pogreskaGauss['niska'] = fuzz.gaussmf(pogreskaGauss.universe, 0,5)
+pogreskaGauss['srednja'] = fuzz.gaussmf(pogreskaGauss.universe, 15,5)
+pogreskaGauss['visoka'] = fuzz.gaussmf(pogreskaGauss.universe, 30,5)
+pogreskaGauss.view()
+grijacGauss = ctrl.Consequent(np.linspace(0, 10, 100), 'grijacGauss', defuzzify_method='centroid')
+grijacGauss['slab'] = fuzz.gaussmf(grijacGauss.universe, 0,2.5)
+grijacGauss['srednji'] = fuzz.gaussmf(grijacGauss.universe, 5,2.5)
+grijacGauss['jak'] = fuzz.gaussmf(grijacGauss.universe, 10,2.5)
+grijacGauss.view()
+gaussRule1 = ctrl.Rule(pogreskaGauss['niska'],grijacGauss['slab'])
+gaussRule2 = ctrl.Rule(pogreskaGauss['srednja'],grijacGauss['srednji'])
+gaussRule3 = ctrl.Rule(pogreskaGauss['visoka'],grijacGauss['jak'])
+gaussReg = ctrl.ControlSystem([gaussRule1,gaussRule2,gaussRule3])
+######
+gaussReg_sim = ctrl.ControlSystemSimulation(gaussReg)
+gaussReg_sim.input['pogreskaGauss'] = np.linspace(0,30,100)
+gaussReg_sim.compute()
+outputGauss = gaussReg_sim.output['grijacGauss']
+plt.figure()
+plt.plot(outputGauss)
+plt.title("IZLAZ IZ GAUSSOVOG SUSTAVA")
+plt.show()
+########################################################################################################
