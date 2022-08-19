@@ -1,0 +1,2 @@
+TimeNecessary = 49.3661253452301 seconds
+Accuracy = 0.9668499827384949

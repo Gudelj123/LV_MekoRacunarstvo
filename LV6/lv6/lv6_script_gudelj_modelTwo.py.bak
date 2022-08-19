@@ -1,0 +1,31 @@
+from keras import layers
+from keras import models
+from keras.datasets import mnist
+from keras.utils import to_categorical
+
+#activationFunctions = ["relu", "tanh", "sigmoid" ]
+
+(X_train, y_train), (X_test, y_test) = mnist.load_data()
+
+X_train = X_train.reshape(60000,28,28,1)
+X_train = X_train.astype('float32') / 255
+X_test = X_test.reshape(10000,28,28,1)
+X_test = X_test.astype('float32') / 255
+y_train = to_categorical(y_train) 
+y_test = to_categorical(y_test)
+
+modelTwo = models.Sequential()
+modelTwo.add(layers.Conv2D(64, kernel_size=5, activation="relu", input_shape=(28,28,1)))
+modelTwo.add(layers.MaxPooling2D((2, 2)))
+
+modelTwo.add(layers.Conv2D(32, kernel_size = 5,activation = "relu"))
+modelTwo.add(layers.MaxPooling2D((2, 2)))
+
+modelTwo.add(layers.Flatten())
+modelTwo.add(layers.Dense(10, activation="softmax"))
+
+modelTwo.compile(optimizer = "adam",loss = "categorical_crossentropy",metrics = ["accuracy"])
+modelTwo.fit(X_train,y_train,validation_data = (X_test,y_test),epochs = 5)
+
+modelTwo.predict(X_test[:5])
+
